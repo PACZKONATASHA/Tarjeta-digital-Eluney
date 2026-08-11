@@ -203,18 +203,35 @@ $('#btn-mapa').href = 'https://www.google.com/maps/search/?api=1&query=' + encod
   $('#btn-agenda').href = url.toString();
 })();
 
-(function armarWhatsApp() {
-  const btn  = $('#btn-wa');
-  const nota = $('#wa-note');
+/* ============================================================
+   NOMBRE PERSONALIZADO DEL INVITADO
+   ------------------------------------------------------------
+   Se toma de la dirección web, así que NO hay que tocar el código
+   para cada invitado: a cada uno le mandás el mismo link pero con
+   su nombre al final.
 
-  if (!CONFIG.whatsapp) {
-    btn.href = '#';
-    btn.addEventListener('click', (e) => { e.preventDefault(); nota.hidden = false; });
-    return;
-  }
-  const texto = `¡Hola! Confirmo mi asistencia a los XV de ${CONFIG.nombre} 💫`;
-  btn.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`;
+     ...tarjeta/?invitado=Familia%20Pérez
+     ...tarjeta/?invitado=Tía%20Marta
+
+   El %20 es un espacio. Si el link lo armás desde el celular o lo
+   pegás en WhatsApp, podés escribir el espacio normal y funciona
+   igual. Sin ?invitado=... la tarjeta se ve como siempre.
+============================================================ */
+const invitado = (function leerInvitado() {
+  const p = new URLSearchParams(window.location.search);
+  const valor = (p.get('invitado') || p.get('nombre') || p.get('i') || '').trim();
+  return valor.slice(0, 60);   // por si alguien pega cualquier cosa en la URL
 })();
+
+if (invitado) {
+  const enPortada = $('#invitado-portada');
+  enPortada.textContent = `Para ${invitado}`;
+  enPortada.hidden = false;
+
+  const enRsvp = $('#invitado-rsvp');
+  enRsvp.textContent = `¡Te esperamos, ${invitado}!`;
+  enRsvp.hidden = false;
+}
 
 /* ============================================================
    INSTAGRAM
@@ -236,21 +253,23 @@ $('#btn-mapa').href = 'https://www.google.com/maps/search/?api=1&query=' + encod
 })();
 
 /* ============================================================
-   SUGERIR CANCIÓN (modal)
+   VENTANAS EMERGENTES (modales)
+   Un solo motor para los dos formularios: confirmar y sugerir.
 ============================================================ */
-(function modalCancion() {
-  const btnAbrir = $('#btn-sugerir');
-  const modal    = $('#modal-cancion');
-  const form     = $('#form-cancion');
-  const aviso    = $('#cancion-aviso');
-  if (!btnAbrir || !modal) return;
+function armarModal(selBoton, selModal, selPrimerCampo) {
+  const boton = $(selBoton);
+  const modal = $(selModal);
+  if (!boton || !modal) return null;
+
+  const form  = modal.querySelector('form');
+  const aviso = modal.querySelector('.modal__aviso');
 
   function abrir() {
     modal.hidden = false;
     document.body.classList.add('is-locked');
     aviso.hidden = true;
     form.hidden = false;
-    setTimeout(() => $('#cancion-nombre').focus(), 50);
+    setTimeout(() => { const c = $(selPrimerCampo); if (c) c.focus(); }, 50);
   }
 
   function cerrar() {
@@ -258,31 +277,112 @@ $('#btn-mapa').href = 'https://www.google.com/maps/search/?api=1&query=' + encod
     document.body.classList.remove('is-locked');
   }
 
-  btnAbrir.addEventListener('click', abrir);
-  $$('[data-cerrar]').forEach(el => el.addEventListener('click', cerrar));
+  function terminar(mensaje) {
+    form.hidden = true;
+    aviso.textContent = mensaje;
+    aviso.hidden = false;
+  }
+
+  boton.addEventListener('click', abrir);
+  /* ojo: sólo los "cerrar" DE ESTE modal, si no un modal cierra al otro */
+  modal.querySelectorAll('[data-cerrar]').forEach(el => el.addEventListener('click', cerrar));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !modal.hidden) cerrar();
   });
 
-  form.addEventListener('submit', (e) => {
+  return { form, abrir, cerrar, terminar };
+}
+
+/* Manda el mensaje por WhatsApp. Si todavía no cargaste el número
+   en CONFIG.whatsapp, el formulario igual responde bien. */
+function enviarPorWhatsApp(texto) {
+  if (!CONFIG.whatsapp) return false;
+  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`,
+              '_blank', 'noopener');
+  return true;
+}
+
+/* ============================================================
+   CONFIRMAR ASISTENCIA (modal con adultos y niños)
+============================================================ */
+(function modalRsvp() {
+  const m = armarModal('#btn-wa', '#modal-rsvp', '#rsvp-nombre');
+  if (!m) return;
+
+  /* si el link traía ?invitado=..., el nombre ya viene escrito */
+  if (invitado) $('#rsvp-nombre').value = invitado;
+
+  /* contadores − / + */
+  $$('[data-conteo]').forEach((caja) => {
+    const num = caja.querySelector('[data-num]');
+    const [menos, mas] = caja.querySelectorAll('.conteo__btn');
+
+    function pintar() {
+      const v = Number(num.textContent);
+      menos.disabled = v <= 0;
+      mas.disabled   = v >= 15;
+    }
+
+    caja.querySelectorAll('.conteo__btn').forEach((b) => {
+      b.addEventListener('click', () => {
+        const v = Number(num.textContent) + Number(b.dataset.paso);
+        num.textContent = String(Math.min(15, Math.max(0, v)));
+        pintar();
+      });
+    });
+
+    pintar();
+  });
+
+  m.form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nombre  = $('#rsvp-nombre').value.trim();
+    const adultos = Number($('#rsvp-adultos').textContent);
+    const ninos   = Number($('#rsvp-ninos').textContent);
+
+    if (!nombre) { $('#rsvp-nombre').focus(); return; }
+    if (adultos + ninos === 0) {
+      m.terminar('Elegí al menos una persona para poder confirmar 💛');
+      setTimeout(() => { m.form.hidden = false; $('#rsvp-aviso').hidden = true; }, 2200);
+      return;
+    }
+
+    let texto = `💫 Confirmo mi asistencia a los XV de ${CONFIG.nombre}\n`;
+    texto += `Nombre: ${nombre}\n`;
+    texto += `Adultos: ${adultos}\n`;
+    texto += `Niños: ${ninos}`;
+    enviarPorWhatsApp(texto);
+
+    const total = adultos + ninos;
+    m.terminar(`¡Gracias ${nombre}! Quedaron confirmados ${total} lugar${total === 1 ? '' : 'es'} 💛`);
+  });
+})();
+
+/* ============================================================
+   SUGERIR CANCIÓN (modal)
+============================================================ */
+(function modalCancion() {
+  const m = armarModal('#btn-sugerir', '#modal-cancion', '#cancion-nombre');
+  if (!m) return;
+
+  if (invitado) $('#cancion-nombre').value = invitado;
+
+  m.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const nombre  = $('#cancion-nombre').value.trim();
     const cancion = $('#cancion-tema').value.trim();
     const link    = $('#cancion-link').value.trim();
-    if (!nombre || !cancion) return;
+    if (!nombre)  { $('#cancion-nombre').focus(); return; }
+    if (!cancion) { $('#cancion-tema').focus();   return; }
 
-    if (CONFIG.whatsapp) {
-      let texto = `🎶 Sugerencia de canción para los XV de ${CONFIG.nombre}\n`;
-      texto += `De: ${nombre}\n`;
-      texto += `Canción: ${cancion}`;
-      if (link) texto += `\nLink: ${link}`;
-      window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
-    }
+    let texto = `🎶 Sugerencia de canción para los XV de ${CONFIG.nombre}\n`;
+    texto += `De: ${nombre}\n`;
+    texto += `Canción: ${cancion}`;
+    if (link) texto += `\nLink: ${link}`;
+    enviarPorWhatsApp(texto);
 
-    form.hidden = true;
-    aviso.textContent = '¡Gracias! Tu canción fue anotada para la playlist 🎧';
-    aviso.hidden = false;
-    form.reset();
+    m.terminar('¡Gracias! Tu canción fue anotada para la playlist 🎧');
+    m.form.reset();
   });
 })();
 
