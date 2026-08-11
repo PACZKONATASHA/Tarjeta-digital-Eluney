@@ -485,42 +485,65 @@ img{ max-width:100%; display:block; }
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 
-/* ---------- GALERÍA DE RECUERDOS ---------- */
-.galeria{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:clamp(.7rem,2.6vw,1.1rem);
-  max-width:760px; margin:0 auto;
-}
-.galeria__item{
-  position:relative; margin:0; overflow:hidden;
-  aspect-ratio:3 / 4;
+/* ---------- GALERÍA DE RECUERDOS (una foto por vez) ---------- */
+.galeria{ max-width:400px; margin:0 auto; }
+
+.galeria__marco{
+  position:relative;
+  overflow:hidden;
   border-radius:4px;
   background:var(--vidrio);
-  box-shadow:0 22px 40px -28px rgba(0,0,0,.95);
+  box-shadow:0 26px 46px -30px rgba(0,0,0,.95);
 }
-/* la primera es apaisada: ocupa el ancho completo, arriba */
-.galeria__item--wide{ grid-column:1 / -1; aspect-ratio:16 / 10; }
-
-.galeria__item img{
-  width:100%; height:100%;
-  object-fit:cover; object-position:center;
-  transition:transform 1.2s var(--ease), filter 1.2s var(--ease);
-}
-/* marco dorado fino + leve viñeta, para integrarlas al fondo oscuro */
-.galeria__item::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
+/* marco dorado fino + viñeta, para integrar la foto al fondo oscuro */
+.galeria__marco::after{
+  content:""; position:absolute; inset:0; z-index:3; pointer-events:none;
   border:1px solid var(--linea);
   border-radius:4px;
-  box-shadow:inset 0 0 34px rgba(7,11,8,.5);
+  box-shadow:inset 0 0 40px rgba(7,11,8,.55);
 }
-.galeria__item:hover img{ transform:scale(1.05); filter:brightness(1.06); }
 
-/* navegador viejo sin aspect-ratio: evita que las fotos colapsen */
-@supports not (aspect-ratio: 1 / 1){
-  .galeria__item{ height:230px; }
-  .galeria__item--wide{ height:210px; }
+.galeria__pista{
+  display:flex;
+  transition:transform .8s var(--ease);
+  touch-action:pan-y;   /* deja pasar el scroll vertical, captura el horizontal */
 }
+.galeria__slide{
+  flex:0 0 100%; margin:0;
+  aspect-ratio:4 / 5;
+}
+.galeria__slide img{
+  width:100%; height:100%;
+  object-fit:cover;
+  user-select:none; -webkit-user-select:none; -webkit-user-drag:none;
+}
+@supports not (aspect-ratio: 1 / 1){ .galeria__slide{ height:min(66vh,420px); } }
+
+/* flechas */
+.galeria__nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:4;
+  width:38px; height:38px; padding:0; border-radius:50%;
+  display:grid; place-items:center; cursor:pointer;
+  background:rgba(11,17,12,.55);
+  border:1px solid var(--linea);
+  color:var(--champagne);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  transition:background .4s var(--ease), color .4s var(--ease);
+}
+.galeria__nav svg{ width:18px; height:18px; }
+.galeria__nav--prev{ left:10px; }
+.galeria__nav--next{ right:10px; }
+.galeria__nav:hover{ background:rgba(216,184,120,.9); color:var(--noche); }
+.galeria__nav:active{ transform:translateY(-50%) scale(.94); }
+
+/* puntitos */
+.galeria__puntos{ display:flex; justify-content:center; gap:.55rem; margin-top:1.1rem; }
+.galeria__punto{
+  width:7px; height:7px; padding:0; border-radius:100px; cursor:pointer;
+  background:transparent; border:1px solid rgba(216,184,120,.55);
+  transition:width .5s var(--ease), background .5s var(--ease);
+}
+.galeria__punto.is-on{ width:22px; background:var(--dorado); border-color:var(--dorado); }
 
 /* ---------- INFO / FIESTA ---------- */
 .info{

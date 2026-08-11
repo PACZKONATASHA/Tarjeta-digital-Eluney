@@ -286,6 +286,49 @@ function crearParticulas() {
 }
 
 /* ============================================================
+   GALERÍA DE RECUERDOS · una foto por vez
+============================================================ */
+(function galeria() {
+  const pista  = $('#galeria-pista');
+  const puntos = $('#galeria-puntos');
+  if (!pista) return;
+
+  const slides = Array.from(pista.children);
+  let actual = 0;
+
+  slides.forEach((_, i) => {
+    const p = document.createElement('button');
+    p.type = 'button';
+    p.className = 'galeria__punto';
+    p.setAttribute('aria-label', `Ver foto ${i + 1} de ${slides.length}`);
+    p.addEventListener('click', () => ir(i));
+    puntos.appendChild(p);
+  });
+
+  function ir(i) {
+    actual = (i + slides.length) % slides.length;   // da la vuelta en los extremos
+    pista.style.transform = `translateX(-${actual * 100}%)`;
+    Array.from(puntos.children).forEach((p, n) => p.classList.toggle('is-on', n === actual));
+  }
+
+  $('#galeria-prev').addEventListener('click', () => ir(actual - 1));
+  $('#galeria-next').addEventListener('click', () => ir(actual + 1));
+
+  /* Deslizar con el dedo */
+  let x0 = null;
+  pista.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+  pista.addEventListener('pointerup', (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0;
+    if (Math.abs(dx) > 40) ir(actual + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  pista.addEventListener('pointercancel', () => { x0 = null; });
+
+  ir(0);
+})();
+
+/* ============================================================
    APARICIÓN AL SCROLL
 ============================================================ */
 function activarReveals() {
