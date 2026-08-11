@@ -19,16 +19,17 @@
 ============================================================ -->
 <section class="portada" id="portada">
   <div class="portada__card">
+    <div class="brillos" id="brillos-portada" aria-hidden="true"></div>
+
     <div class="portada__inner">
 
       <p class="portada__eyebrow">Te invito a mis</p>
 
       <div class="xv">
-        <div class="xv__veil"></div>
-        <img class="xv__img" src="recursos/mis-15.png" alt="XV Años">
+        <img class="xv__img" src="recursos/xv-plateado.png" alt="XV Años Eluney">
+        <span class="xv__anios">Años</span>
+        <span class="xv__nombre">Eluney</span>
       </div>
-
-      <p class="portada__name">Eluney</p>
 
       <div class="divider divider--sm">
         <span class="divider__line"></span>
@@ -55,10 +56,11 @@
      2 · INTRO EN VIDEO
 ============================================================ -->
 <section class="intro" id="intro" aria-hidden="true">
-  <video class="intro__video" id="intro-video" playsinline webkit-playsinline muted preload="auto">
+  <video class="intro__video" id="intro-video" playsinline webkit-playsinline muted loop preload="auto">
     <source src="recursos/bosque-magico.mp4" type="video/mp4">
   </video>
   <div class="intro__scrim"></div>
+  <div class="brillos brillos--intro" id="brillos-intro" aria-hidden="true"></div>
 
   <div class="intro__stage" id="intro-stage">
     <p class="intro__line" data-line>Hay sueños que se esperan<br>toda la vida…</p>
@@ -82,7 +84,7 @@
   <!-- HERO -->
   <header class="hero" id="hero">
     <div class="hero__bg"></div>
-    <div class="hero__particles" id="particles" aria-hidden="true"></div>
+    <div class="brillos" id="brillos-hero" aria-hidden="true"></div>
 
     <div class="hero__content">
       <p class="hero__pre">20 · 11 · 2026</p>
@@ -210,6 +212,7 @@
   <!-- CIERRE -->
   <footer class="closing reveal">
     <div class="closing__bg"></div>
+    <div class="brillos" id="brillos-cierre" aria-hidden="true"></div>
     <div class="closing__content">
       <p class="closing__pre">Con todo mi cariño</p>
       <p class="closing__name">Eluney</p>
