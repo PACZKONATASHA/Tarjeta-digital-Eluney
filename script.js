@@ -16,7 +16,8 @@ const CONFIG = {
   // Número de WhatsApp para confirmar asistencia.
   // Formato internacional SIN "+" ni espacios. Ej: '5491123456789'
   // Dejalo vacío ('') si todavía no lo tenés.
-  whatsapp: '',
+  // Acá: 3786-417162  →  54 (Argentina) + 9 (celular) + 3786417162
+  whatsapp: '5493786417162',
 
   // Usuario de Instagram (sin @) al que va a apuntar el botón "Ver en Instagram".
   // Dejalo vacío ('') si todavía no lo tenés.
