@@ -1,22 +1,21 @@
 /* ============================================================
    MIS XV AÑOS · ELUNEY
-   Paleta: verde salvia + champagne + marfil
+   Paleta: plateado + verde agua
 ============================================================ */
 
 :root{
-  /* verde menta del vestido */
-  --ivory:      #f7f5f1;
-  --ivory-soft: #fcfaf7;
-  --sage-pale:  #e6f1ea;
-  --sage:       #a9cebd;
-  --sage-deep:  #5f9581;
-  --sage-ink:   #3f7061;
-  --gold:       #c2a468;
-  --gold-soft:  #ddc79b;
-  --plata:      #dfe7e2;
-  --script-ink: #2b332d;
-  --ink:        #3a423d;
-  --ink-soft:   #6f7a73;
+  --ivory:      #f6faf9;
+  --ivory-soft: #fbfdfd;
+  --sage-pale:  #cceae8;
+  --sage:       #a8dcd9;
+  --sage-deep:  #68c3b7;
+  --sage-ink:   #539091;
+  --gold:       #b7c2c3;
+  --gold-soft:  #dde6e6;
+  --plata:      #eef4f4;
+  --script-ink: #2f3b3a;
+  --ink:        #3a4544;
+  --ink-soft:   #6d7d7c;
   --white:      #ffffff;
 
   --f-display: 'Italiana', 'Cormorant Garamond', Georgia, serif;
@@ -70,9 +69,9 @@ img{ max-width:100%; display:block; }
 .btn--solid{
   background:linear-gradient(135deg,var(--sage-deep),var(--sage));
   color:#fff; border:1px solid transparent;
-  box-shadow:0 10px 26px -12px rgba(59,74,56,.75);
+  box-shadow:0 10px 26px -12px rgba(58,69,68,.75);
 }
-.btn--solid:hover{ transform:translateY(-3px); box-shadow:0 16px 32px -12px rgba(59,74,56,.85); }
+.btn--solid:hover{ transform:translateY(-3px); box-shadow:0 16px 32px -12px rgba(58,69,68,.85); }
 
 .btn--ghost{
   background:transparent; color:var(--sage-deep);
@@ -80,7 +79,7 @@ img{ max-width:100%; display:block; }
 }
 .btn--ghost:hover{ background:rgba(85,104,79,.08); transform:translateY(-3px); }
 
-.btn--wa{ background:linear-gradient(135deg,#3f7a54,#65a37b); box-shadow:0 10px 26px -12px rgba(63,122,84,.8); }
+.btn--wa{ background:linear-gradient(135deg,var(--sage-ink),var(--sage-deep)); box-shadow:0 10px 26px -12px rgba(83,144,145,.8); }
 
 .btn:active{ transform:translateY(-1px) scale(.985); }
 
@@ -103,7 +102,7 @@ img{ max-width:100%; display:block; }
   position:fixed; inset:0; z-index:60;
   display:grid; place-items:center;
   background:
-    radial-gradient(120% 90% at 50% 0%, #ffffff 0%, var(--sage-pale) 52%, #cfe3d8 100%);
+    radial-gradient(120% 90% at 50% 0%, #ffffff 0%, var(--sage-pale) 52%, var(--sage) 100%);
   padding:min(4vh,28px) 14px;
   transition:opacity .9s var(--ease), visibility .9s;
 }
@@ -113,10 +112,10 @@ img{ max-width:100%; display:block; }
   position:relative;
   width:min(94vw, 420px);
   height:min(94vh, 738px);
-  background:url("recursos/imagen-tarjeta.png") center/cover no-repeat;
+  background:url("recursos/fondo-tarjeta.png") center/cover no-repeat;
   border-radius:10px;
   box-shadow:
-    0 40px 80px -40px rgba(59,74,56,.5),
+    0 40px 80px -40px rgba(58,69,68,.5),
     0 2px 0 rgba(255,255,255,.6) inset;
   overflow:hidden;
   animation:cardIn 1.5s var(--ease) both;
@@ -124,7 +123,7 @@ img{ max-width:100%; display:block; }
 @keyframes cardIn{ from{ opacity:0; transform:translateY(26px) scale(.97);} to{ opacity:1; transform:none;} }
 
 .portada__inner{
-  position:absolute; inset:0;
+  position:absolute; inset:0; z-index:3;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   text-align:center;
   padding:14% 12% 12%;
@@ -139,36 +138,39 @@ img{ max-width:100%; display:block; }
 
 /* --- XV plateado + caligrafía --- */
 .xv{
-  position:relative;
+  display:flex; flex-direction:column; align-items:center;
   width:100%; max-width:320px;
-  container-type:inline-size;
   margin:.6rem 0 3.1rem;
   animation:fadeUp 1.2s .7s var(--ease) both;
 }
-.xv__img{
-  width:100%;
-  filter:drop-shadow(0 8px 20px rgba(63,112,97,.28));
+.xv__num{
+  font-family:var(--f-display);
+  font-size:clamp(2.4rem,12vw,3.8rem);
+  font-weight:400; line-height:1;
+  letter-spacing:.34em; padding-right:.34em; /* balancea el tracking al centrar */
+  background:linear-gradient(160deg,#ffffff 0%,var(--gold) 45%,var(--sage-ink) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 6px 16px rgba(83,144,145,.28));
   animation:xvGlow 6s ease-in-out infinite;
 }
-@keyframes xvGlow{ 0%,100%{ filter:drop-shadow(0 8px 20px rgba(63,112,97,.28)) brightness(1);} 50%{ filter:drop-shadow(0 8px 22px rgba(63,112,97,.34)) brightness(1.09);} }
+@keyframes xvGlow{ 0%,100%{ filter:drop-shadow(0 6px 16px rgba(83,144,145,.28)) brightness(1);} 50%{ filter:drop-shadow(0 6px 20px rgba(83,144,145,.36)) brightness(1.07);} }
 
 .xv__anios,
 .xv__nombre{
-  position:absolute;
   font-family:var(--f-script);
   line-height:1; white-space:nowrap;
   color:var(--script-ink);
-  text-shadow:0 2px 10px rgba(255,255,255,.5);
 }
 .xv__anios{
-  left:54%; top:53%; transform:translate(-50%,-50%);
-  font-size:min(18vw,76px);   /* respaldo */
-  font-size:24cqw;
+  margin-top:.3rem;
+  font-size:clamp(1.4rem,6vw,2rem);
+  opacity:.9;
 }
 .xv__nombre{
-  left:50%; top:106%; transform:translate(-50%,-50%);
-  font-size:min(22vw,92px);   /* respaldo */
-  font-size:29cqw;
+  margin-top:-.2rem;
+  font-size:clamp(2.9rem,14vw,4.6rem);
+  background:linear-gradient(160deg,var(--sage-ink) 0%,var(--gold) 55%,var(--sage-deep) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 
 .portada__phrase{
@@ -239,7 +241,7 @@ img{ max-width:100%; display:block; }
   color:#fff;
   text-shadow:0 1px 3px rgba(0,0,0,.75), 0 2px 26px rgba(0,0,0,.65);
   opacity:0; transform:translateY(20px) scale(.985);
-  transition:opacity 2.1s var(--ease), transform 2.6s var(--ease);
+  transition:opacity 2.6s var(--ease), transform 3s var(--ease);
   pointer-events:none;
 }
 .intro__line.is-on{ opacity:1; transform:none; }
@@ -284,47 +286,15 @@ img{ max-width:100%; display:block; }
 .hero{
   position:relative;
   min-height:100svh; min-height:100vh;
-  display:grid; place-items:center;
-  text-align:center;
   overflow:hidden;
-  padding:14vh 8vw;
 }
 .hero__bg{
   position:absolute; inset:0;
-  background:url("recursos/imagen-tarjeta.png") center/cover no-repeat;
-  opacity:.95;
+  background:url("recursos/hero-mi-tarjeta.png") center/cover no-repeat;
 }
 .hero__bg::after{
   content:""; position:absolute; inset:0;
-  background:radial-gradient(75% 60% at 50% 45%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.35) 55%, rgba(255,255,255,0) 85%);
-}
-.hero__content{ position:relative; z-index:2; animation:fadeUp 1.6s .2s var(--ease) both; }
-
-.hero__pre{
-  margin:0 0 1rem;
-  font-size:.66rem; letter-spacing:.5em; text-transform:uppercase;
-  color:var(--sage-deep);
-}
-.hero__name{
-  margin:0;
-  font-family:var(--f-script);
-  font-size:clamp(3.6rem,20vw,7rem);
-  font-weight:400; line-height:.95;
-  background:linear-gradient(160deg,var(--sage-deep) 10%,var(--sage) 45%,var(--gold) 95%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-}
-.hero__xv{
-  margin:.5rem 0 0;
-  font-family:var(--f-display);
-  font-size:clamp(1rem,5vw,1.5rem);
-  letter-spacing:.34em; text-transform:uppercase;
-  color:var(--sage-ink);
-}
-.hero__quote{
-  margin:0;
-  font-family:var(--f-serif); font-style:italic;
-  font-size:clamp(1rem,4.4vw,1.2rem); line-height:1.6;
-  color:var(--ink-soft);
+  background:linear-gradient(180deg, rgba(15,22,21,0) 72%, rgba(15,22,21,.4) 100%);
 }
 
 .hero__scroll{
@@ -349,10 +319,10 @@ img{ max-width:100%; display:block; }
   border-radius:50%;
   background:radial-gradient(circle,
     #ffffff 0%,
-    rgba(240,246,243,.95) 30%,
-    rgba(199,214,206,.55) 55%,
-    rgba(199,214,206,0) 72%);
-  box-shadow:0 0 8px rgba(255,255,255,.85), 0 0 16px rgba(215,228,221,.55);
+    rgba(244,250,249,.95) 30%,
+    rgba(204,234,232,.55) 55%,
+    rgba(204,234,232,0) 72%);
+  box-shadow:0 0 8px rgba(255,255,255,.85), 0 0 16px rgba(204,234,232,.6);
   animation:flotar linear infinite, titilar ease-in-out infinite;
 }
 @keyframes flotar{
@@ -440,7 +410,7 @@ img{ max-width:100%; display:block; }
   border:1px solid rgba(194,164,104,.35);
   border-radius:4px;
   backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
-  box-shadow:0 14px 30px -22px rgba(59,74,56,.8);
+  box-shadow:0 14px 30px -22px rgba(58,69,68,.8);
 }
 .cd__num{
   display:block;
@@ -491,7 +461,7 @@ img{ max-width:100%; display:block; }
   border-radius:4px;
   transition:transform .6s var(--ease), box-shadow .6s var(--ease);
 }
-.info__item:hover{ transform:translateY(-5px); box-shadow:0 24px 40px -30px rgba(59,74,56,.9); }
+.info__item:hover{ transform:translateY(-5px); box-shadow:0 24px 40px -30px rgba(58,69,68,.9); }
 .info__ico{
   width:30px; height:30px; margin:0 auto 1rem;
   fill:none; stroke:var(--gold); stroke-width:1.1;
@@ -542,14 +512,14 @@ img{ max-width:100%; display:block; }
 }
 .closing__bg{
   position:absolute; inset:0;
-  background:url("recursos/imagen-tarjeta.png") center/cover no-repeat;
+  background:url("recursos/fondo-tarjeta.png") center/cover no-repeat;
   transform:scaleY(-1);
 }
 .closing__bg::after{
   content:""; position:absolute; inset:0;
-  background:linear-gradient(180deg, rgba(59,74,56,.82), rgba(43,56,42,.9));
+  background:linear-gradient(180deg, rgba(58,69,68,.82), rgba(31,38,37,.9));
 }
-.closing__content{ position:relative; z-index:2; color:#fff; }
+.closing__content{ position:relative; z-index:3; color:#fff; }
 .closing__pre{
   margin:0 0 .6rem;
   font-size:.6rem; letter-spacing:.46em; text-transform:uppercase;
@@ -588,7 +558,7 @@ img{ max-width:100%; display:block; }
   background:rgba(255,255,255,.82);
   border:1px solid rgba(194,164,104,.5);
   color:var(--sage-deep);
-  box-shadow:0 12px 26px -14px rgba(59,74,56,.9);
+  box-shadow:0 12px 26px -14px rgba(58,69,68,.9);
   backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
   transition:transform .45s var(--ease), background .45s var(--ease), color .45s var(--ease);
 }

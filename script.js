@@ -19,7 +19,11 @@ const CONFIG = {
   whatsapp: '',
 
   duracionHoras: 6,          // duración estimada (para "Agendar el día")
-  zonaHoraria: 'America/Argentina/Buenos_Aires'
+  zonaHoraria: 'America/Argentina/Buenos_Aires',
+
+  // Cuánto dura cada frase del video, en milisegundos.
+  // Más alto = frases más lentas. (6800 ms ≈ 6,8 segundos cada una)
+  duracionFrase: 6800
 };
 
 /* ============================================================
@@ -76,7 +80,7 @@ function subirVolumen(destino, ms) {
 ============================================================ */
 const frases = $$('[data-line]');
 let fraseActual = -1;
-let temporizadorFallback = null;
+let temporizadorFrases = null;
 
 function reproducirIntro() {
   intro.classList.add('is-in');
@@ -84,43 +88,21 @@ function reproducirIntro() {
 
   video.muted = true;                       // la banda sonora es la canción
   const p = video.play();
-  if (p && p.catch) p.catch(() => usarFallback());
+  if (p && p.catch) p.catch(() => {});       // si el video no puede reproducirse, las frases avanzan igual
 
-  video.addEventListener('error', usarFallback, { once: true });
-  video.addEventListener('ended', mostrarTarjeta, { once: true });
-
-  // Las frases se reparten a lo largo de la duración real del video
-  if (video.readyState >= 1) prepararFrases();
-  else video.addEventListener('loadedmetadata', prepararFrases, { once: true });
-
-  // Red de seguridad: si el video no llegó a reproducirse en 3s, seguimos igual
-  setTimeout(() => {
-    const arrancoBien = !video.paused && video.readyState >= 2 && video.currentTime > 0;
-    if (!introFinalizada && !arrancoBien) usarFallback();
-  }, 3000);
+  iniciarFrases();
 }
 
-function prepararFrases() {
-  const total = isFinite(video.duration) && video.duration > 2 ? video.duration : 20;
-  const bloque = total / frases.length;
-
-  video.addEventListener('timeupdate', () => {
-    const idx = Math.min(frases.length - 1, Math.floor(video.currentTime / bloque));
-    mostrarFrase(idx);
-  });
-}
-
-/* Si el video no puede reproducirse, las frases corren por tiempo */
-function usarFallback() {
-  if (temporizadorFallback || introFinalizada) return;
-  const bloque = 3800;
+/* Las frases avanzan solas, al ritmo de CONFIG.duracionFrase */
+function iniciarFrases() {
+  if (temporizadorFrases) return;
   let i = 0;
   mostrarFrase(0);
-  temporizadorFallback = setInterval(() => {
+  temporizadorFrases = setInterval(() => {
     i++;
-    if (i >= frases.length) { clearInterval(temporizadorFallback); mostrarTarjeta(); return; }
+    if (i >= frases.length) { clearInterval(temporizadorFrases); mostrarTarjeta(); return; }
     mostrarFrase(i);
-  }, bloque);
+  }, CONFIG.duracionFrase);
 }
 
 function mostrarFrase(idx) {
@@ -138,7 +120,7 @@ function mostrarTarjeta() {
   if (introFinalizada) return;
   introFinalizada = true;
 
-  if (temporizadorFallback) clearInterval(temporizadorFallback);
+  if (temporizadorFrases) clearInterval(temporizadorFrases);
 
   intro.classList.add('is-out');
   intro.setAttribute('aria-hidden', 'true');
