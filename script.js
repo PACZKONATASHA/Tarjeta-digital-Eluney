@@ -18,6 +18,14 @@ const CONFIG = {
   // Dejalo vacío ('') si todavía no lo tenés.
   whatsapp: '',
 
+  // Usuario de Instagram (sin @) al que va a apuntar el botón "Ver en Instagram".
+  // Dejalo vacío ('') si todavía no lo tenés.
+  instagram: '',
+
+  // Hashtag para que suban las fotos de la fiesta. Dejalo vacío ('')
+  // para armarlo solo a partir del nombre, ej: "#15Eluney".
+  hashtag: '',
+
   duracionHoras: 6,          // duración estimada (para "Agendar el día")
   zonaHoraria: 'America/Argentina/Buenos_Aires',
 
@@ -206,6 +214,76 @@ $('#btn-mapa').href = 'https://www.google.com/maps/search/?api=1&query=' + encod
   }
   const texto = `¡Hola! Confirmo mi asistencia a los XV de ${CONFIG.nombre} 💫`;
   btn.href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`;
+})();
+
+/* ============================================================
+   INSTAGRAM
+============================================================ */
+(function armarInstagram() {
+  const btn  = $('#btn-instagram');
+  const nota = $('#ig-note');
+  const hash = $('#ig-hash');
+  if (!btn) return;
+
+  hash.textContent = '#' + (CONFIG.hashtag || `15${CONFIG.nombre}`).replace(/^#/, '');
+
+  if (!CONFIG.instagram) {
+    btn.href = '#';
+    btn.addEventListener('click', (e) => { e.preventDefault(); nota.hidden = false; });
+    return;
+  }
+  btn.href = `https://www.instagram.com/${CONFIG.instagram.replace(/^@/, '')}/`;
+})();
+
+/* ============================================================
+   SUGERIR CANCIÓN (modal)
+============================================================ */
+(function modalCancion() {
+  const btnAbrir = $('#btn-sugerir');
+  const modal    = $('#modal-cancion');
+  const form     = $('#form-cancion');
+  const aviso    = $('#cancion-aviso');
+  if (!btnAbrir || !modal) return;
+
+  function abrir() {
+    modal.hidden = false;
+    document.body.classList.add('is-locked');
+    aviso.hidden = true;
+    form.hidden = false;
+    setTimeout(() => $('#cancion-nombre').focus(), 50);
+  }
+
+  function cerrar() {
+    modal.hidden = true;
+    document.body.classList.remove('is-locked');
+  }
+
+  btnAbrir.addEventListener('click', abrir);
+  $$('[data-cerrar]').forEach(el => el.addEventListener('click', cerrar));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) cerrar();
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nombre  = $('#cancion-nombre').value.trim();
+    const cancion = $('#cancion-tema').value.trim();
+    const link    = $('#cancion-link').value.trim();
+    if (!nombre || !cancion) return;
+
+    if (CONFIG.whatsapp) {
+      let texto = `🎶 Sugerencia de canción para los XV de ${CONFIG.nombre}\n`;
+      texto += `De: ${nombre}\n`;
+      texto += `Canción: ${cancion}`;
+      if (link) texto += `\nLink: ${link}`;
+      window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
+    }
+
+    form.hidden = true;
+    aviso.textContent = '¡Gracias! Tu canción fue anotada para la playlist 🎧';
+    aviso.hidden = false;
+    form.reset();
+  });
 })();
 
 /* ============================================================

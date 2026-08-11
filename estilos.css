@@ -93,12 +93,6 @@ img{ max-width:100%; display:block; }
 }
 .btn--ghost:hover{ background:rgba(216,184,120,.1); border-color:rgba(216,184,120,.55); transform:translateY(-3px); }
 
-.btn--wa{
-  background:linear-gradient(135deg,var(--musgo-luz) 0%,var(--musgo) 100%);
-  color:var(--marfil); border-color:rgba(147,173,147,.45);
-  box-shadow:0 12px 30px -14px rgba(60,82,64,.9);
-}
-
 .btn:active{ transform:translateY(-1px) scale(.985); }
 
 /* ============================================================
@@ -573,6 +567,75 @@ img{ max-width:100%; display:block; }
   color:var(--marfil-low);
 }
 
+/* ---------- ITINERARIO ---------- */
+.itin{
+  position:relative;
+  max-width:520px; margin:0 auto;
+}
+/* la línea vertical del centro */
+.itin::before{
+  content:""; position:absolute; z-index:0;
+  left:50%; transform:translateX(-50%);
+  top:22px; bottom:22px; width:1px;
+  background:linear-gradient(180deg,
+    transparent 0%, var(--dorado) 8%,
+    var(--dorado) 92%, transparent 100%);
+  opacity:.5;
+}
+
+.itin__item{
+  position:relative; z-index:1;
+  display:flex; align-items:center;
+  gap:clamp(.6rem,3vw,1.2rem);
+  padding:clamp(.5rem,2.2vw,.9rem) 0;
+}
+/* zigzag: en los pares el ícono pasa a la izquierda */
+.itin__item:nth-child(even){ flex-direction:row-reverse; }
+
+.itin__side{ flex:1 1 0; min-width:0; }
+
+.itin__text{ text-align:right; }
+.itin__item:nth-child(even) .itin__text{ text-align:left; }
+
+.itin__hora{
+  margin:0;
+  font-family:var(--f-display);
+  font-size:clamp(1.35rem,6vw,1.75rem); line-height:1.1;
+  letter-spacing:.04em;
+  color:var(--champagne);
+  font-variant-numeric:tabular-nums;
+}
+.itin__lab{
+  margin:.3rem 0 0;
+  font-size:clamp(.6rem,2.7vw,.7rem);
+  letter-spacing:.2em; text-indent:.2em; text-transform:uppercase; line-height:1.5;
+  color:var(--marfil-dim);
+}
+
+/* el puntito sobre la línea */
+.itin__dot{
+  flex:none;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--dorado);
+  box-shadow:0 0 0 4px var(--bosque), 0 0 14px rgba(216,184,120,.55);
+}
+
+.itin__ico{ display:flex; }
+.itin__item:nth-child(odd)  .itin__ico{ justify-content:flex-start; }
+.itin__item:nth-child(even) .itin__ico{ justify-content:flex-end; }
+.itin__ico svg{
+  width:clamp(38px,13vw,52px); height:auto;
+  fill:none; stroke:var(--dorado); stroke-width:1.1;
+  stroke-linecap:round; stroke-linejoin:round;
+  opacity:.9;
+}
+.itin__ico .itin__fill{ fill:var(--dorado); stroke:none; }
+
+/* en pantallas chicas achico el margen lateral para que respire */
+@media (max-width:420px){
+  #itinerario{ padding-left:5vw; padding-right:5vw; }
+}
+
 /* ---------- ALIAS ---------- */
 .alias{
   display:inline-flex; align-items:center; flex-wrap:wrap; gap:.9rem; justify-content:center;
@@ -590,6 +653,29 @@ img{ max-width:100%; display:block; }
   transition:background .4s var(--ease), color .4s var(--ease);
 }
 .alias__btn:hover{ background:var(--dorado); color:var(--noche); }
+
+/* ---------- INSTAGRAM ---------- */
+.ig__sub{
+  margin:-1rem 0 2.2rem;
+  font-family:var(--f-serif);
+  font-size:clamp(1rem,4.2vw,1.15rem);
+  font-style:italic;
+  color:var(--marfil-dim);
+}
+.ig__ico{
+  width:56px; height:56px; margin:0 auto 1.6rem;
+  fill:none; stroke:var(--dorado); stroke-width:1.3;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.ig__ico .ig__corazon{ fill:var(--dorado); stroke:none; }
+.ig__ico .ig__punto{ fill:var(--dorado); stroke:none; }
+.ig__hash{
+  margin:0 0 .4rem;
+  font-family:var(--f-display);
+  font-size:clamp(1.7rem,7.5vw,2.3rem);
+  letter-spacing:.04em;
+  color:var(--champagne);
+}
 
 /* ---------- CIERRE ---------- */
 .closing{
@@ -643,6 +729,84 @@ img{ max-width:100%; display:block; }
 .reveal.is-visible{ opacity:1; transform:none; }
 
 /* ============================================================
+   MODAL · SUGERIR CANCIÓN
+============================================================ */
+.modal{
+  position:fixed; inset:0; z-index:90;
+  display:grid; place-items:center;
+  padding:min(4vh,26px) 14px;
+}
+.modal[hidden]{ display:none; }
+
+.modal__velo{
+  position:absolute; inset:0;
+  background:rgba(4,7,5,.72);
+  backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  animation:fadeIn .4s var(--ease) both;
+}
+
+.modal__caja{
+  position:relative; z-index:1;
+  width:min(94vw,420px);
+  max-height:92vh; overflow-y:auto;
+  padding:clamp(2rem,7vw,2.8rem) clamp(1.6rem,6vw,2.4rem) 2.4rem;
+  text-align:center;
+  background:linear-gradient(180deg, var(--bosque-2) 0%, var(--noche-2) 100%);
+  border:1px solid var(--linea-soft);
+  border-radius:14px;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(240,226,196,.06) inset;
+  animation:cardIn .5s var(--ease) both;
+}
+
+.modal__x{
+  position:absolute; top:1.1rem; right:1.1rem;
+  width:30px; height:30px; padding:0;
+  display:grid; place-items:center;
+  background:none; border:none; cursor:pointer;
+  color:var(--marfil-dim);
+  transition:color .3s var(--ease), transform .3s var(--ease);
+}
+.modal__x:hover{ color:var(--champagne); transform:rotate(90deg); }
+.modal__x svg{
+  width:18px; height:18px;
+  fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round;
+}
+
+.modal__ico{
+  width:64px; height:64px; margin:0 auto .6rem;
+  fill:none; stroke:var(--dorado); stroke-width:1.3;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.modal__chispa{ fill:var(--dorado); stroke:none; }
+
+.modal__titulo{
+  margin:0 0 1.8rem;
+  font-family:var(--f-display);
+  font-size:clamp(1.4rem,6vw,1.75rem);
+  letter-spacing:.08em; text-indent:.08em;
+  color:var(--champagne);
+}
+
+.modal__form{ display:flex; flex-direction:column; gap:1.3rem; }
+.modal__campo{
+  width:100%; padding:.7rem .2rem;
+  background:none; border:none; border-bottom:1px solid var(--linea);
+  font-family:var(--f-sans); font-size:.92rem; font-weight:300;
+  color:var(--marfil); text-align:center;
+  transition:border-color .35s var(--ease);
+}
+.modal__campo::placeholder{ color:var(--marfil-low); }
+.modal__campo:focus{ outline:none; border-color:var(--dorado); }
+
+.modal__enviar{ width:100%; margin-top:.6rem; }
+
+.modal__aviso{
+  margin:1.2rem 0 0;
+  font-size:.78rem; line-height:1.7;
+  color:var(--dorado);
+}
+
+/* ============================================================
    MÚSICA (flotante)
 ============================================================ */
 .music{
@@ -677,11 +841,40 @@ img{ max-width:100%; display:block; }
 /* ============================================================
    RESPONSIVE / A11Y
 ============================================================ */
+/* ------------------------------------------------------------
+   ESCRITORIO (≥900px)
+   El celular queda EXACTAMENTE como está: todo lo de acá abajo
+   sólo se aplica en pantallas anchas.
+   La tarjeta se muestra como una columna centrada — así las fotos
+   verticales llenan el ancho igual que en el celular, en vez de
+   quedar diminutas en el medio de una pantalla enorme.
+------------------------------------------------------------ */
 @media (min-width:900px){
   .portada__card{ width:min(90vw,470px); height:min(92vh,820px); }
-  .sec{ padding-left:10vw; padding-right:10vw; }
-  /* en pantallas anchas la foto vertical se mostraría muy recortada */
-  .hero__bg{ background-size:contain; background-color:var(--noche); }
+
+  /* fondo de bosque a los costados de la columna */
+  body{
+    background:radial-gradient(120% 80% at 50% 0%, #16241a 0%, #0b110c 55%, #070b08 100%) fixed;
+  }
+
+  .card{
+    max-width:640px;
+    margin:0 auto;
+    border-left:1px solid var(--linea-soft);
+    border-right:1px solid var(--linea-soft);
+    box-shadow:0 0 110px -25px rgba(0,0,0,.95);
+  }
+
+  /* 10vw sería muchísimo dentro de una columna de 640px */
+  .sec{ padding-left:3.6rem; padding-right:3.6rem; }
+
+  /* las 3 tarjetas de Fecha/Horario/Lugar no entran a lo ancho de la columna */
+  .info{ grid-template-columns:1fr; }
+
+  /* El degradado dorado sólo pinta DENTRO de la caja del texto.
+     Con line-height:1 la cola de la "y" quedaba afuera y se veía cortada. */
+  .xv__nombre{ line-height:1.25; padding-bottom:.14em; }
+  .closing__name{ line-height:1.2; padding-bottom:.12em; }
 }
 
 @media (max-width:360px){
