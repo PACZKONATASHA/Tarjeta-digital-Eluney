@@ -235,11 +235,11 @@ img{ max-width:100%; display:block; }
   margin:0;
   font-family:var(--f-serif);
   font-size:clamp(1.35rem,6vw,2.3rem);
-  font-style:italic; font-weight:300; line-height:1.5;
+  font-style:italic; font-weight:400; line-height:1.55;
   color:#fff;
-  text-shadow:0 2px 30px rgba(0,0,0,.6);
-  opacity:0; transform:translateY(18px) scale(.98);
-  transition:opacity 1.3s var(--ease), transform 1.6s var(--ease);
+  text-shadow:0 1px 3px rgba(0,0,0,.75), 0 2px 26px rgba(0,0,0,.65);
+  opacity:0; transform:translateY(20px) scale(.985);
+  transition:opacity 2.1s var(--ease), transform 2.6s var(--ease);
   pointer-events:none;
 }
 .intro__line.is-on{ opacity:1; transform:none; }
@@ -340,19 +340,30 @@ img{ max-width:100%; display:block; }
 }
 @keyframes scrollDot{ 0%{ transform:translateY(-100%);} 60%,100%{ transform:translateY(100%);} }
 
-/* ---------- Partículas ---------- */
-.hero__particles{ position:absolute; inset:0; z-index:1; pointer-events:none; }
-.particle{
-  position:absolute; bottom:-10px;
+/* ---------- Brillos plateados flotantes ---------- */
+.brillos{ position:absolute; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+.brillos--intro{ z-index:1; }
+
+.brillo{
+  position:absolute; bottom:-14px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(221,199,155,.6) 45%, transparent 70%);
-  animation:float linear infinite;
+  background:radial-gradient(circle,
+    #ffffff 0%,
+    rgba(240,246,243,.95) 30%,
+    rgba(199,214,206,.55) 55%,
+    rgba(199,214,206,0) 72%);
+  box-shadow:0 0 8px rgba(255,255,255,.85), 0 0 16px rgba(215,228,221,.55);
+  animation:flotar linear infinite, titilar ease-in-out infinite;
 }
-@keyframes float{
-  0%{ transform:translate(0,0) scale(.6); opacity:0; }
-  15%{ opacity:.9; }
-  85%{ opacity:.5; }
-  100%{ transform:translate(var(--dx,20px),-105vh) scale(1.1); opacity:0; }
+@keyframes flotar{
+  0%{   transform:translate(0,0) scale(.55); }
+  50%{  transform:translate(var(--dx,20px),-52vh) scale(1); }
+  100%{ transform:translate(calc(var(--dx,20px) * -.6),-108vh) scale(.7); }
+}
+@keyframes titilar{
+  0%,100%{ opacity:.15; }
+  35%{ opacity:.95; }
+  65%{ opacity:.45; }
 }
 
 /* ---------- SECCIONES ---------- */
