@@ -268,7 +268,10 @@ img{ max-width:100%; display:block; }
   grid-area:1/1;
   margin:0;
   font-family:var(--f-serif);
-  font-size:clamp(1.35rem,6vw,2.3rem);
+  /* el tope de 2.3rem las dejaba chicas en pantallas grandes.
+     El 6.4vw se mantiene bajo a propósito: con más, la frase larga
+     ("Y hay noches que se recuerdan") se parte en el celular. */
+  font-size:clamp(1.5rem,6.4vw,3.4rem);
   font-style:italic; font-weight:400; line-height:1.55;
   color:var(--marfil);
   text-shadow:0 1px 3px rgba(0,0,0,.8), 0 2px 26px rgba(0,0,0,.7);
@@ -281,7 +284,7 @@ img{ max-width:100%; display:block; }
 .intro__line--final{ display:flex; flex-direction:column; gap:.35rem; }
 .intro__script{
   font-family:var(--f-script);
-  font-size:clamp(2.4rem,11vw,4rem); font-style:normal; line-height:1.15;
+  font-size:clamp(2.7rem,11.5vw,5.6rem); font-style:normal; line-height:1.15;
   color:#fff;
   opacity:.94;
   /* sin degradado dorado: blanco puro, tamaño menor = trazo más fino y delicado */
@@ -290,7 +293,7 @@ img{ max-width:100%; display:block; }
 /* misma tipografía y color que "Bienvenidos", sólo que más chica */
 .intro__sub{
   font-family:var(--f-script); font-style:normal;
-  font-size:clamp(1.15rem,4.8vw,1.7rem); line-height:1.3;
+  font-size:clamp(1.3rem,5.2vw,2.4rem); line-height:1.3;
   letter-spacing:normal; text-transform:none;
   color:#fff; opacity:.88;
   text-shadow:0 1px 2px rgba(0,0,0,.45), 0 2px 24px rgba(255,255,255,.22);
