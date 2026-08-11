@@ -296,6 +296,12 @@ function crearParticulas() {
   const slides = Array.from(pista.children);
   let actual = 0;
 
+  // cada slide usa su propia foto, difuminada, como relleno del marco
+  slides.forEach((s) => {
+    const img = s.querySelector('img');
+    if (img) s.style.setProperty('--foto', `url("${img.getAttribute('src')}")`);
+  });
+
   slides.forEach((_, i) => {
     const p = document.createElement('button');
     p.type = 'button';
@@ -310,9 +316,6 @@ function crearParticulas() {
     pista.style.transform = `translateX(-${actual * 100}%)`;
     Array.from(puntos.children).forEach((p, n) => p.classList.toggle('is-on', n === actual));
   }
-
-  $('#galeria-prev').addEventListener('click', () => ir(actual - 1));
-  $('#galeria-next').addEventListener('click', () => ir(actual + 1));
 
   /* Deslizar con el dedo */
   let x0 = null;

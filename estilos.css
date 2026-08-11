@@ -509,32 +509,26 @@ img{ max-width:100%; display:block; }
   touch-action:pan-y;   /* deja pasar el scroll vertical, captura el horizontal */
 }
 .galeria__slide{
+  position:relative; overflow:hidden;
   flex:0 0 100%; margin:0;
   aspect-ratio:4 / 5;
 }
+/* la foto entera, sin recortar, sea vertical o apaisada */
 .galeria__slide img{
+  position:relative; z-index:1;
   width:100%; height:100%;
-  object-fit:cover;
+  object-fit:contain;
   user-select:none; -webkit-user-select:none; -webkit-user-drag:none;
 }
-@supports not (aspect-ratio: 1 / 1){ .galeria__slide{ height:min(66vh,420px); } }
-
-/* flechas */
-.galeria__nav{
-  position:absolute; top:50%; transform:translateY(-50%); z-index:4;
-  width:38px; height:38px; padding:0; border-radius:50%;
-  display:grid; place-items:center; cursor:pointer;
-  background:rgba(11,17,12,.55);
-  border:1px solid var(--linea);
-  color:var(--champagne);
-  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-  transition:background .4s var(--ease), color .4s var(--ease);
+/* relleno: la misma foto difuminada, para que no queden bandas vacías */
+.galeria__slide::before{
+  content:""; position:absolute; inset:0; z-index:0;
+  background-image:var(--foto);
+  background-size:cover; background-position:center;
+  filter:blur(26px) brightness(.42) saturate(.8);
+  transform:scale(1.25);
 }
-.galeria__nav svg{ width:18px; height:18px; }
-.galeria__nav--prev{ left:10px; }
-.galeria__nav--next{ right:10px; }
-.galeria__nav:hover{ background:rgba(216,184,120,.9); color:var(--noche); }
-.galeria__nav:active{ transform:translateY(-50%) scale(.94); }
+@supports not (aspect-ratio: 1 / 1){ .galeria__slide{ height:min(66vh,420px); } }
 
 /* puntitos */
 .galeria__puntos{ display:flex; justify-content:center; gap:.55rem; margin-top:1.1rem; }
