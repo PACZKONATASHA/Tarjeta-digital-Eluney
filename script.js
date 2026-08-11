@@ -293,13 +293,23 @@ function crearParticulas() {
   const puntos = $('#galeria-puntos');
   if (!pista) return;
 
+  const marco  = pista.parentElement;
   const slides = Array.from(pista.children);
   let actual = 0;
 
-  // cada slide usa su propia foto, difuminada, como relleno del marco
+  /* El marco copia la forma de la foto activa: así la llena entera,
+     sin recortarla y sin dejar bandas vacías arriba o a los costados.
+     Se limita el rango para que no quede ni larguísimo ni demasiado chato. */
+  function ajustarMarco() {
+    const img = slides[actual].querySelector('img');
+    if (!img || !img.naturalWidth) return;   // todavía no cargó
+    const r = img.naturalWidth / img.naturalHeight;
+    marco.style.aspectRatio = String(Math.min(1.5, Math.max(0.7, r)));
+  }
+
   slides.forEach((s) => {
     const img = s.querySelector('img');
-    if (img) s.style.setProperty('--foto', `url("${img.getAttribute('src')}")`);
+    if (img && !img.complete) img.addEventListener('load', ajustarMarco, { once: true });
   });
 
   slides.forEach((_, i) => {
@@ -315,6 +325,7 @@ function crearParticulas() {
     actual = (i + slides.length) % slides.length;   // da la vuelta en los extremos
     pista.style.transform = `translateX(-${actual * 100}%)`;
     Array.from(puntos.children).forEach((p, n) => p.classList.toggle('is-on', n === actual));
+    ajustarMarco();
   }
 
   /* Deslizar con el dedo */
