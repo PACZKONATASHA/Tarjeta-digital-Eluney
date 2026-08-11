@@ -111,8 +111,6 @@ function mostrarFrase(idx) {
   frases.forEach((f, i) => f.classList.toggle('is-on', i === idx));
 }
 
-$('#btn-skip').addEventListener('click', mostrarTarjeta);
-
 /* ============================================================
    3 · TARJETA
 ============================================================ */
@@ -257,26 +255,34 @@ audio.addEventListener('play',  refrescarBotonMusica);
 audio.addEventListener('pause', refrescarBotonMusica);
 
 /* ============================================================
-   PARTÍCULAS DEL HERO
+   BRILLOS DORADOS FLOTANTES
 ============================================================ */
-function crearParticulas() {
-  const cont = $('#particles');
-  if (!cont || cont.childElementCount) return;
+function crearBrillos(contenedor) {
+  if (!contenedor || contenedor.childElementCount) return;
 
-  const cantidad = window.innerWidth < 640 ? 14 : 22;
+  const cantidad = window.innerWidth < 640 ? 16 : 26;
   for (let i = 0; i < cantidad; i++) {
-    const p = document.createElement('span');
-    p.className = 'particle';
-    const tam = 3 + Math.random() * 6;
-    p.style.width  = tam + 'px';
-    p.style.height = tam + 'px';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.setProperty('--dx', (Math.random() * 90 - 45) + 'px');
-    p.style.animationDuration = (12 + Math.random() * 14) + 's';
-    p.style.animationDelay = (-Math.random() * 20) + 's';
-    p.style.opacity = 0.35 + Math.random() * 0.5;
-    cont.appendChild(p);
+    const b = document.createElement('span');
+    b.className = 'brillo';
+    const tam = 2 + Math.random() * 5;
+    b.style.width  = tam + 'px';
+    b.style.height = tam + 'px';
+    b.style.left = Math.random() * 100 + '%';
+    b.style.setProperty('--dx', (Math.random() * 90 - 45) + 'px');
+    // dos duraciones: la primera para "flotar", la segunda para "titilar"
+    b.style.animationDuration = `${14 + Math.random() * 16}s, ${2.5 + Math.random() * 3.5}s`;
+    b.style.animationDelay = `${-Math.random() * 24}s, ${-Math.random() * 6}s`;
+    contenedor.appendChild(b);
   }
+}
+
+/* Los de la portada y el intro arrancan enseguida; los de la tarjeta, al mostrarla */
+crearBrillos($('#brillos-portada'));
+crearBrillos($('#brillos-intro'));
+
+function crearParticulas() {
+  crearBrillos($('#brillos-hero'));
+  crearBrillos($('#brillos-cierre'));
 }
 
 /* ============================================================
