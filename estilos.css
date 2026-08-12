@@ -107,6 +107,18 @@ img{ max-width:100%; display:block; }
 .divider--light .divider__line:last-child{ background:linear-gradient(90deg,var(--champagne),transparent); }
 .divider--light .divider__mark{ fill:var(--champagne); }
 
+/* blanco puro, para que se lea sobre el video */
+.divider--white .divider__line{
+  background:linear-gradient(90deg,transparent,#fff);
+  opacity:.85;
+  box-shadow:0 0 8px rgba(255,255,255,.4);
+}
+.divider--white .divider__line:last-child{ background:linear-gradient(90deg,#fff,transparent); }
+.divider--white .divider__mark{
+  fill:#fff;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.75));
+}
+
 /* ============================================================
    1 · PORTADA
 ============================================================ */
@@ -306,26 +318,18 @@ img{ max-width:100%; display:block; }
   opacity:.94;
   /* sin degradado dorado: blanco puro, tamaño menor = trazo más fino y delicado */
   text-shadow:0 1px 2px rgba(0,0,0,.45), 0 2px 30px rgba(255,255,255,.28);
-  padding-bottom:.2em;   /* el aire donde apoya el subrayado */
 }
-/* Subrayado fino: se desvanece en las puntas, así no parece un renglón
-   sino un trazo. Se dibuja solo, del centro hacia afuera, cuando la
-   frase aparece. */
-.intro__script::after{
-  content:"";
-  position:absolute; left:50%; bottom:.02em;
-  width:58%; height:1px;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,.7) 20%,
-    #fff 50%,
-    rgba(255,255,255,.7) 80%,
-    transparent 100%);
-  box-shadow:0 0 10px rgba(255,255,255,.5);
-  transform:translateX(-50%) scaleX(0);
-  transition:transform 1.8s var(--ease) .7s;
+/* el divisor de abajo de "Bienvenidos": se abre del centro hacia
+   afuera un ratito después de que aparece la frase */
+.divider--intro{
+  width:min(300px,66%);
+  margin:.55rem auto .35rem;
+  transform:scaleX(.15); opacity:0;
+  transition:transform 1.8s var(--ease) .7s, opacity 1.2s var(--ease) .7s;
 }
-.intro__line--final.is-on .intro__script::after{ transform:translateX(-50%) scaleX(1); }
+.divider--intro .divider__mark{ width:clamp(13px,3.6vw,18px); height:clamp(13px,3.6vw,18px); }
+.intro__line--final.is-on .divider--intro{ transform:none; opacity:1; }
+
 /* misma tipografía y color que "Bienvenidos", sólo que más chica */
 .intro__sub{
   font-family:var(--f-script); font-style:normal;
@@ -354,7 +358,7 @@ img{ max-width:100%; display:block; }
 }
 .hero__bg{
   position:absolute; inset:0;
-  background:url("recursos/hero-mi-tarjeta.png") center/cover no-repeat;
+  background:url("recursos/hero-eluney.jpg?v=2") center/cover no-repeat;
 }
 /* funde la foto con el fondo de la página, arriba y abajo */
 .hero__bg::after{
