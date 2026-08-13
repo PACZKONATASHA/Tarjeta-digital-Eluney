@@ -17,11 +17,15 @@ const CONFIG = {
   // Formato internacional SIN "+" ni espacios. Ej: '5491123456789'
   // Dejalo vacío ('') si todavía no lo tenés.
   // Acá: 3786-417162  →  54 (Argentina) + 9 (celular) + 3786417162
-  whatsapp: '5493786417162',
+  whatsapp: '5491138209030',
+
+  // Tu WhatsApp (paczko.web), el de la firma del final de la tarjeta.
+  // 3786-417162  →  54 (Argentina) + 9 (celular) + 3786417162
+  autorWhatsapp: '5493786417162',
 
   // Usuario de Instagram (sin @) al que va a apuntar el botón "Ver en Instagram".
   // Dejalo vacío ('') si todavía no lo tenés.
-  instagram: '',
+  instagram: 'eluney_palos_alvarado',
 
   // Hashtag para que suban las fotos de la fiesta. Dejalo vacío ('')
   // para armarlo solo a partir del nombre, ej: "#15Eluney".
@@ -202,6 +206,14 @@ $('#btn-mapa').href = 'https://www.google.com/maps/search/?api=1&query=' + encod
   url.searchParams.set('details', `¡Te espero para celebrar mis XV años! — ${CONFIG.nombre}`);
   url.searchParams.set('ctz', CONFIG.zonaHoraria);
   $('#btn-agenda').href = url.toString();
+})();
+
+/* Firma del final: el WhatsApp de quien diseñó la tarjeta */
+(function armarFirma() {
+  const enlace = $('#firma-wa');
+  if (!enlace || !CONFIG.autorWhatsapp) return;
+  const texto = 'Hola! Vi una tarjeta digital tuya y me gustaría hacer una.';
+  enlace.href = `https://wa.me/${CONFIG.autorWhatsapp}?text=${encodeURIComponent(texto)}`;
 })();
 
 /* ============================================================
@@ -467,10 +479,10 @@ function crearParticulas() {
 /* ============================================================
    GALERÍA DE RECUERDOS · una foto por vez
 ============================================================ */
-(function galeria() {
+const galeriaCtrl = (function galeria() {
   const pista  = $('#galeria-pista');
   const puntos = $('#galeria-puntos');
-  if (!pista) return;
+  if (!pista) return null;
 
   const marco  = pista.parentElement;
   const slides = Array.from(pista.children);
@@ -496,7 +508,7 @@ function crearParticulas() {
     p.type = 'button';
     p.className = 'galeria__punto';
     p.setAttribute('aria-label', `Ver foto ${i + 1} de ${slides.length}`);
-    p.addEventListener('click', () => ir(i));
+    p.addEventListener('click', () => { ir(i); reiniciarSolo(); });
     puntos.appendChild(p);
   });
 
@@ -507,18 +519,84 @@ function crearParticulas() {
     ajustarMarco();
   }
 
+  /* Las fotos pasan solas: nadie tiene que descubrir que se desliza.
+     Se frena mientras la foto está ampliada o si la pestaña no se ve. */
+  const PAUSA = 4200;
+  const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reloj = null;
+
+  function arrancarSolo() {
+    if (quieto || reloj || slides.length < 2) return;
+    reloj = setInterval(() => ir(actual + 1), PAUSA);
+  }
+  function frenarSolo() {
+    clearInterval(reloj);
+    reloj = null;
+  }
+  /* después de tocar algo, damos aire antes de que siga sola */
+  function reiniciarSolo() {
+    frenarSolo();
+    if (!document.hidden) arrancarSolo();
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) frenarSolo(); else arrancarSolo();
+  });
+
   /* Deslizar con el dedo */
   let x0 = null;
-  pista.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+  let arrastro = false;
+  pista.addEventListener('pointerdown', (e) => { x0 = e.clientX; arrastro = false; frenarSolo(); });
   pista.addEventListener('pointerup', (e) => {
     if (x0 === null) return;
     const dx = e.clientX - x0;
+    arrastro = Math.abs(dx) > 8;            // si movió el dedo, fue swipe y no un toque
     if (Math.abs(dx) > 40) ir(actual + (dx < 0 ? 1 : -1));
     x0 = null;
+    reiniciarSolo();
   });
-  pista.addEventListener('pointercancel', () => { x0 = null; });
+  pista.addEventListener('pointercancel', () => { x0 = null; arrastro = true; reiniciarSolo(); });
+
+  /* Tocar la foto la agranda a pantalla completa */
+  slides.forEach((s) => {
+    const img = s.querySelector('img');
+    if (img) img.addEventListener('click', () => { if (!arrastro) abrirLightbox(img); });
+  });
 
   ir(0);
+  arrancarSolo();
+
+  return { frenarSolo, arrancarSolo };
+})();
+
+/* ============================================================
+   LIGHTBOX · foto a pantalla completa
+============================================================ */
+function abrirLightbox(img) {
+  const caja = $('#lightbox');
+  const grande = $('#lightbox-img');
+  if (!caja || !grande) return;
+  grande.src = img.currentSrc || img.src;
+  grande.alt = img.alt;
+  caja.hidden = false;
+  document.body.classList.add('is-locked');
+  if (galeriaCtrl) galeriaCtrl.frenarSolo();   // que no siga pasando atrás
+}
+
+(function lightbox() {
+  const caja = $('#lightbox');
+  if (!caja) return;
+
+  function cerrar() {
+    caja.hidden = true;
+    document.body.classList.remove('is-locked');
+    if (galeriaCtrl) galeriaCtrl.arrancarSolo();
+  }
+
+  caja.querySelectorAll('[data-cerrar]').forEach(el => el.addEventListener('click', cerrar));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !caja.hidden) cerrar();
+  });
 })();
 
 /* ============================================================
